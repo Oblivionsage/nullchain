@@ -12,9 +12,10 @@
 
 If you discover a security vulnerability in NullChain, please report it privately:
 
-1. **Email**: Open a private security advisory on GitHub
-2. **Response Time**: We aim to respond within 48 hours
-3. **Updates**: You will receive updates on the progress
+1. **GitHub Security Advisory**: Use GitHub's private security advisory feature
+2. **Email**: security@nullchain.org (if available)
+3. **Response Time**: The NullChain team aims to respond within 48 hours
+4. **Updates**: You will receive regular updates on the progress
 
 ### What to Include
 
@@ -22,17 +23,18 @@ If you discover a security vulnerability in NullChain, please report it privatel
 - Steps to reproduce
 - Potential impact
 - Suggested fix (if any)
+- Your contact information (for follow-up)
 
 ### Disclosure Policy
 
-- We will acknowledge receipt within 48 hours
-- We will provide an initial assessment within 7 days
+- The team will acknowledge receipt within 48 hours
+- Initial assessment provided within 7 days
 - We will work on a fix and coordinate disclosure timing with you
-- We will credit you in the release notes (unless you prefer anonymity)
+- Security researchers will be credited in release notes (unless anonymity is preferred)
 
 ### Bug Bounty
 
-Currently, NullChain does not have a formal bug bounty program. However, we deeply appreciate security researchers and will acknowledge contributions.
+Currently, NullChain does not have a formal bug bounty program. However, the development team deeply appreciates security researchers and will acknowledge all contributions.
 
 ## Security Best Practices
 
@@ -46,9 +48,15 @@ When using NullChain:
 
 ## Cryptographic Algorithms
 
-NullChain uses:
+NullChain uses industry-standard cryptographic primitives:
 - **Hashing**: Blake3
-- **Signatures**: Ed25519 (current), BLS12-381 (future)
-- **ZK Proofs**: Plonky2/Halo2 (future)
+- **Signatures**: Ed25519 (current), BLS12-381 (planned)
+- **ZK Proofs**: Plonky2/Halo2 (planned)
 
-All cryptographic primitives use well-audited libraries.
+All cryptographic primitives use well-audited libraries maintained by the Rust community.
+
+## Contact
+
+For security-related inquiries, contact the NullChain development team through:
+- GitHub Security Advisories
+- GitHub Issues (for non-sensitive matters)

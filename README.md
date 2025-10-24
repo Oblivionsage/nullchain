@@ -207,10 +207,13 @@ This is a research project. Contributions welcome, but expect high standards:
 
 MIT + Apache 2.0 (same as Rust). Use at your own risk.
 
+
 ## Contact
 
-- GitHub: https://github.com/Oblivionsage/nullchain
-- Author: nullprophet
+- **GitHub**: https://github.com/Oblivionsage/nullchain
+- **Team**: NullChain Development Team
+- **Issues**: https://github.com/Oblivionsage/nullchain/issues
+- **Discussions**: https://github.com/Oblivionsage/nullchain/discussions
 
 ---
 

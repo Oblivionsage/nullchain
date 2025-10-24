@@ -12,9 +12,9 @@ members = [
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-authors = ["nullprophet"]
+authors = ["NullChain Team <dev@nullchain.org>"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/nullprophet/nullchain"
+repository = "https://github.com/Oblivionsage/nullchain"
 
 [workspace.dependencies]
 # Crypto
