@@ -1,14 +1,7 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+//! Cryptographic primitives for NullChain
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub mod hash;
+pub mod keys;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub use hash::{hash_data, double_hash, hash_block_header};
+pub use keys::{generate_keypair, sign_message, verify_signature};
