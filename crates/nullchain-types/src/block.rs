@@ -112,32 +112,50 @@ impl Block {
         let hash = self.hash();
         let target = Self::bits_to_target(self.header.bits);
         
-        // Hash must be less than or equal to target
-        hash.as_bytes() <= target.as_bytes()
+        // Compare as big-endian (most significant bytes first)
+        for i in (0..32).rev() {
+            if hash.as_bytes()[i] < target.as_bytes()[i] {
+                return true;
+            } else if hash.as_bytes()[i] > target.as_bytes()[i] {
+                return false;
+            }
+        }
+        true // Equal is also valid
     }
     
     /// Convert compact bits representation to full target
+    /// Simplified version for testing
     fn bits_to_target(bits: u32) -> Hash256 {
-        let exponent = (bits >> 24) as usize;
+        let exponent = ((bits >> 24) & 0xff) as usize;
         let mantissa = bits & 0x00ffffff;
         
-        let mut target = [0u8; 32];
+        let mut target = [0xffu8; 32];
+        
         if exponent <= 3 {
-            let mantissa_bytes = mantissa.to_le_bytes();
-            for i in 0..exponent {
-                if i < mantissa_bytes.len() {
-                    target[i] = mantissa_bytes[i];
-                }
+            // Very small target
+            let bytes = mantissa.to_le_bytes();
+            for i in 0..32 {
+                target[i] = if i < exponent { bytes[i] } else { 0 };
             }
-        } else {
+        } else if exponent < 32 {
+            // Normal case
             let start = exponent - 3;
+            target[start..32].fill(0xff);
+            
+            let mantissa_bytes = mantissa.to_be_bytes();
             if start < 32 {
-                let mantissa_bytes = mantissa.to_be_bytes();
-                for i in 0..3 {
-                    if start + i < 32 {
-                        target[start + i] = mantissa_bytes[i + 1];
-                    }
-                }
+                target[start] = mantissa_bytes[1];
+            }
+            if start + 1 < 32 {
+                target[start + 1] = mantissa_bytes[2];
+            }
+            if start + 2 < 32 {
+                target[start + 2] = mantissa_bytes[3];
+            }
+            
+            // Fill rest with zeros
+            for i in (start + 3)..32 {
+                target[i] = 0;
             }
         }
         
@@ -190,5 +208,22 @@ mod tests {
         // Should be deterministic
         assert!(!serialized.is_empty());
         assert_eq!(serialized, genesis.header.serialize());
+    }
+    
+    #[test]
+    fn test_easy_difficulty() {
+        let mut block = Block::genesis();
+        // Very easy: just need first byte < 0x10
+        block.header.bits = 0x1f0fffff;
+        
+        // Should find quickly
+        for nonce in 0..100000 {
+            block.header.nonce = nonce;
+            if block.meets_difficulty_target() {
+                println!("Found at nonce: {}", nonce);
+                return;
+            }
+        }
+        panic!("Should have found a block");
     }
 }
