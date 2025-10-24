@@ -16,9 +16,8 @@
             Privacy is not a feature. It's a fundamental human right.
 ```
 
-## Philosophy
-
 NullChain is built on cypherpunk principles:
+
 - **Privacy by default**: No opt-in required
 - **Minimal trusted code**: <10k lines of auditable Rust
 - **Cryptographic soundness**: Well-studied primitives only
@@ -62,16 +61,19 @@ cargo build --release
 ```
 
 **Security Notes:**
+
 - Private keys are encrypted with your passphrase
 - Passphrase never stored (keep it secure!)
 - Use air-gapped machine for maximum security
 
 #### Derive Address
+
 ```bash
 ./target/release/nullchain address --pubkey ~/.nullchain/public.key
 ```
 
 #### Mine Block
+
 ```bash
 # Easy difficulty (testing)
 ./target/release/nullchain mine --iterations 10000000 --bits 0x1f0fffff
@@ -81,6 +83,7 @@ cargo build --release
 ```
 
 ## Architecture
+
 ```
 nullchain/
 ├── crates/
@@ -159,4 +162,3 @@ Dual-licensed under MIT + Apache 2.0
 
 ---
 
-**"Those who would give up essential Privacy, to purchase a little temporary Convenience, deserve neither Privacy nor Convenience." - Benjamin Franklin (adapted)**
