@@ -1,5 +1,6 @@
 use crate::hash::Hash256;
 use crate::transaction::Transaction;
+use crate::merkle::MerkleTree;
 use serde::{Deserialize, Serialize};
 
 /// Block header (metadata for proof-of-work)
@@ -22,6 +23,29 @@ pub struct BlockHeader {
     
     /// Nonce for proof-of-work
     pub nonce: u64,
+}
+
+impl BlockHeader {
+    /// Serialize header for hashing (deterministic)
+    pub fn serialize(&self) -> Vec<u8> {
+        bincode::serialize(self).expect("BlockHeader serialization failed")
+    }
+    
+    /// Calculate the hash of this header
+    pub fn hash(&self) -> Hash256 {
+        use blake3::Hasher;
+        
+        let serialized = self.serialize();
+        let mut hasher = Hasher::new();
+        hasher.update(&serialized);
+        
+        // Double hash for PoW (like Bitcoin)
+        let first_hash = hasher.finalize();
+        let mut second_hasher = Hasher::new();
+        second_hasher.update(first_hash.as_bytes());
+        
+        Hash256::from_bytes(*second_hasher.finalize().as_bytes())
+    }
 }
 
 /// Block (collection of transactions)
@@ -55,6 +79,70 @@ impl Block {
             transactions: vec![coinbase],
         }
     }
+    
+    /// Calculate the merkle root of all transactions
+    pub fn calculate_merkle_root(&self) -> Hash256 {
+        if self.transactions.is_empty() {
+            return Hash256::zero();
+        }
+        
+        // Hash each transaction
+        let tx_hashes: Vec<Hash256> = self.transactions
+            .iter()
+            .map(|tx| {
+                let serialized = bincode::serialize(tx).expect("tx serialization");
+                use blake3::Hasher;
+                let mut hasher = Hasher::new();
+                hasher.update(&serialized);
+                Hash256::from_bytes(*hasher.finalize().as_bytes())
+            })
+            .collect();
+        
+        let tree = MerkleTree::new(tx_hashes);
+        tree.root()
+    }
+    
+    /// Get the hash of this block
+    pub fn hash(&self) -> Hash256 {
+        self.header.hash()
+    }
+    
+    /// Check if the block satisfies the difficulty target
+    pub fn meets_difficulty_target(&self) -> bool {
+        let hash = self.hash();
+        let target = Self::bits_to_target(self.header.bits);
+        
+        // Hash must be less than or equal to target
+        hash.as_bytes() <= target.as_bytes()
+    }
+    
+    /// Convert compact bits representation to full target
+    fn bits_to_target(bits: u32) -> Hash256 {
+        let exponent = (bits >> 24) as usize;
+        let mantissa = bits & 0x00ffffff;
+        
+        let mut target = [0u8; 32];
+        if exponent <= 3 {
+            let mantissa_bytes = mantissa.to_le_bytes();
+            for i in 0..exponent {
+                if i < mantissa_bytes.len() {
+                    target[i] = mantissa_bytes[i];
+                }
+            }
+        } else {
+            let start = exponent - 3;
+            if start < 32 {
+                let mantissa_bytes = mantissa.to_be_bytes();
+                for i in 0..3 {
+                    if start + i < 32 {
+                        target[start + i] = mantissa_bytes[i + 1];
+                    }
+                }
+            }
+        }
+        
+        Hash256::from_bytes(target)
+    }
 }
 
 #[cfg(test)]
@@ -69,5 +157,38 @@ mod tests {
         assert_eq!(genesis.header.previous_block, Hash256::zero());
         assert_eq!(genesis.transactions.len(), 1);
         assert!(genesis.transactions[0].is_coinbase());
+    }
+    
+    #[test]
+    fn test_block_hash() {
+        let genesis = Block::genesis();
+        let hash1 = genesis.hash();
+        let hash2 = genesis.hash();
+        
+        // Hashing should be deterministic
+        assert_eq!(hash1, hash2);
+        assert_ne!(hash1, Hash256::zero());
+    }
+    
+    #[test]
+    fn test_merkle_root_calculation() {
+        let mut genesis = Block::genesis();
+        let merkle_root = genesis.calculate_merkle_root();
+        
+        assert_ne!(merkle_root, Hash256::zero());
+        
+        // Set the merkle root
+        genesis.header.merkle_root = merkle_root;
+        assert_eq!(genesis.header.merkle_root, merkle_root);
+    }
+    
+    #[test]
+    fn test_header_serialization() {
+        let genesis = Block::genesis();
+        let serialized = genesis.header.serialize();
+        
+        // Should be deterministic
+        assert!(!serialized.is_empty());
+        assert_eq!(serialized, genesis.header.serialize());
     }
 }
