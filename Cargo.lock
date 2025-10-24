@@ -394,8 +394,10 @@ version = "0.1.0"
 name = "nullchain-node"
 version = "0.1.0"
 dependencies = [
+ "blake3",
  "clap",
  "colored",
+ "hex",
  "nullchain-consensus",
  "nullchain-crypto",
  "nullchain-types",
