@@ -9,7 +9,7 @@ pub fn show_address(pubkey_file: String) {
             std::process::exit(1);
         }
     };
-    
+
     let pubkey_bytes = match hex::decode(&pubkey_hex) {
         Ok(bytes) => bytes,
         Err(_) => {
@@ -17,10 +17,10 @@ pub fn show_address(pubkey_file: String) {
             std::process::exit(1);
         }
     };
-    
+
     let hash = blake3::hash(&pubkey_bytes);
     let address_bytes = &hash.as_bytes()[0..20];
     let address = hex::encode(address_bytes);
-    
+
     println!("{}", format!("null1{}", address).cyan());
 }

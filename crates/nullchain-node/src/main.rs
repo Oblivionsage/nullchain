@@ -6,7 +6,8 @@ fn parse_hex_or_decimal(s: &str) -> Result<u32, String> {
     if let Some(hex_str) = s.strip_prefix("0x") {
         u32::from_str_radix(hex_str, 16).map_err(|e| format!("invalid hex: {}", e))
     } else {
-        s.parse::<u32>().map_err(|e| format!("invalid number: {}", e))
+        s.parse::<u32>()
+            .map_err(|e| format!("invalid number: {}", e))
     }
 }
 
@@ -26,31 +27,31 @@ enum Commands {
         #[arg(short, long)]
         output: Option<String>,
     },
-    
+
     /// Derive address from public key
     Address {
         #[arg(short, long)]
         pubkey: String,
     },
-    
+
     /// Mine new block
     Mine {
         #[arg(short, long)]
         iterations: Option<u64>,
-        
+
         #[arg(short, long, default_value = "0x1f0fffff", value_parser = parse_hex_or_decimal)]
         bits: u32,
     },
-    
+
     /// Display genesis block
     Genesis,
-    
+
     /// Show block information
     Info {
         #[arg(short, long)]
         json: String,
     },
-    
+
     /// Show version information
     Version,
 }

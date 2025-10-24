@@ -4,16 +4,16 @@ use thiserror::Error;
 pub enum StorageError {
     #[error("database error: {0}")]
     Database(#[from] rocksdb::Error),
-    
+
     #[error("serialization error: {0}")]
     Serialization(#[from] bincode::Error),
-    
+
     #[error("block not found: {0}")]
     BlockNotFound(String),
-    
+
     #[error("utxo not found")]
     UtxoNotFound,
-    
+
     #[error("invalid height")]
     InvalidHeight,
 }

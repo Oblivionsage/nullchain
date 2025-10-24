@@ -6,15 +6,15 @@
 //! - Chain state (best block, height)
 
 mod blockstore;
-mod utxo;
 mod error;
+mod utxo;
 
 pub use blockstore::BlockStore;
+pub use error::{Result, StorageError};
 pub use utxo::UtxoSet;
-pub use error::{StorageError, Result};
 
+use rocksdb::{Options, DB};
 use std::path::Path;
-use rocksdb::{DB, Options};
 
 /// Database handle
 pub struct Database {
@@ -27,11 +27,11 @@ impl Database {
         let mut opts = Options::default();
         opts.create_if_missing(true);
         opts.create_missing_column_families(true);
-        
+
         let db = DB::open(&opts, path)?;
         Ok(Self { db })
     }
-    
+
     /// Get reference to RocksDB
     pub fn inner(&self) -> &DB {
         &self.db
@@ -42,7 +42,7 @@ impl Database {
 mod tests {
     use super::*;
     use tempfile::TempDir;
-    
+
     #[test]
     fn test_open_database() {
         let dir = TempDir::new().unwrap();
