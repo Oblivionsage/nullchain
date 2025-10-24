@@ -629,6 +629,7 @@ dependencies = [
  "hex",
  "nullchain-consensus",
  "nullchain-crypto",
+ "nullchain-storage",
  "nullchain-types",
  "serde_json",
  "tracing",
