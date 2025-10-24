@@ -6,10 +6,12 @@
 pub mod block;
 pub mod transaction;
 pub mod hash;
+pub mod merkle;
 
 pub use block::{Block, BlockHeader};
 pub use transaction::{Transaction, TransactionOutput, TransactionInput};
 pub use hash::Hash256;
+pub use merkle::MerkleTree;
 
 /// Chain parameters and constants
 pub mod constants {
