@@ -1,30 +1,18 @@
 use colored::Colorize;
 
 pub fn version() {
-    println!("{} {}", "NullChain".bright_cyan().bold(), "v0.1.0".yellow());
     println!();
-    println!(
-        "{}: {}",
-        "Network".bright_black(),
-        "Testnet (Development)".dimmed()
-    );
-    println!(
-        "{}: {}",
-        "Consensus".bright_black(),
-        "Proof-of-Work (SHA256d)".dimmed()
-    );
-    println!("{}: {}", "Hash Function".bright_black(), "Blake3".dimmed());
-    println!(
-        "{}: {}",
-        "Signature Scheme".bright_black(),
-        "Ed25519".dimmed()
-    );
-    println!(
-        "{}: {}",
-        "Block Time".bright_black(),
-        "600 seconds".dimmed()
-    );
-    println!("{}: {}", "Block Reward".bright_black(), "100 NULL".dimmed());
+    println!("{} {}", 
+        "NullChain".bright_cyan().bold(),
+        "v0.1.0-experimental".yellow());
+    println!("{}", "─".repeat(80).bright_black());
     println!();
-    println!("{}", "github.com/Oblivionsage/nullchain".bright_black());
+    println!("  {:<20} {}", "Network:".dimmed(), "Testnet".bright_black());
+    println!("  {:<20} {}", "Consensus:".dimmed(), "Proof-of-Work".bright_black());
+    println!("  {:<20} {}", "Hash:".dimmed(), "Blake3".bright_black());
+    println!("  {:<20} {}", "Signature:".dimmed(), "Ed25519".bright_black());
+    println!("  {:<20} {}", "Block Time:".dimmed(), "600s".bright_black());
+    println!();
+    println!("  {}", "github.com/Oblivionsage/nullchain".dimmed());
+    println!();
 }
