@@ -6,12 +6,20 @@ authors.workspace = true
 license.workspace = true
 
 [dependencies]
+# Core crypto - minimal, audited libraries
 blake3 = { workspace = true }
-ed25519-dalek = { workspace = true }
-curve25519-dalek = { workspace = true }
-serde = { workspace = true }
-nullchain-types = { path = "../nullchain-types" }
+ed25519-dalek = { workspace = true, features = ["zeroize"] }
+curve25519-dalek = { workspace = true, features = ["zeroize"] }
 rand = "0.8"
+
+# Zero-on-drop for sensitive data
+zeroize = { version = "1.8", features = ["derive"] }
+
+# Serialization
+serde = { workspace = true }
+
+# Internal
+nullchain-types = { path = "../nullchain-types" }
 
 [dev-dependencies]
 hex = "0.4"
