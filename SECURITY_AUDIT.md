@@ -25,4 +25,4 @@
 3. Add constant-time operations
 4. Minimize dependencies
 5. Add security documentation
-6. Code style cleanup (old-school)
+6. Code style cleanup
