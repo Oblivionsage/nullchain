@@ -4,18 +4,16 @@ mod commands;
 
 fn parse_hex_or_decimal(s: &str) -> Result<u32, String> {
     if let Some(hex_str) = s.strip_prefix("0x") {
-        u32::from_str_radix(hex_str, 16)
-            .map_err(|e| format!("Invalid hex: {}", e))
+        u32::from_str_radix(hex_str, 16).map_err(|e| format!("invalid hex: {}", e))
     } else {
-        s.parse::<u32>()
-            .map_err(|e| format!("Invalid number: {}", e))
+        s.parse::<u32>().map_err(|e| format!("invalid number: {}", e))
     }
 }
 
 #[derive(Parser)]
 #[command(name = "nullchain")]
-#[command(version = "0.1.0")]
-#[command(about = "NullChain - Privacy-first Layer-1 blockchain", long_about = None)]
+#[command(version)]
+#[command(about = "Privacy-first blockchain node", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -23,59 +21,55 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Create and display the genesis block
-    Genesis,
-    
-    /// Mine a new block
-    Mine {
-        /// Maximum mining iterations (default: unlimited)
-        #[arg(short, long)]
-        iterations: Option<u64>,
-        
-        /// Difficulty bits (hex: 0x21ffffff or decimal: 553648127)
-        #[arg(short, long, default_value = "0x1f0fffff", value_parser = parse_hex_or_decimal)]
-        bits: u32,
-    },
-    
-    /// Display information about a block
-    Info {
-        /// Block data in JSON format
-        #[arg(short, long)]
-        json: String,
-    },
-    
-    /// Display version and system information
-    Version,
-    
-    /// Generate a new keypair for wallet
+    /// Generate new keypair
     Keygen {
-        /// Output directory for keys
         #[arg(short, long)]
         output: Option<String>,
     },
     
-    /// Show address from public key
+    /// Derive address from public key
     Address {
-        /// Path to public key file
         #[arg(short, long)]
         pubkey: String,
     },
+    
+    /// Mine new block
+    Mine {
+        #[arg(short, long)]
+        iterations: Option<u64>,
+        
+        #[arg(short, long, default_value = "0x1f0fffff", value_parser = parse_hex_or_decimal)]
+        bits: u32,
+    },
+    
+    /// Display genesis block
+    Genesis,
+    
+    /// Show block information
+    Info {
+        #[arg(short, long)]
+        json: String,
+    },
+    
+    /// Show version information
+    Version,
 }
 
 fn main() {
-    // Initialize tracing
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::INFO)
+        .with_target(false)
+        .without_time()
         .init();
 
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Genesis => commands::genesis(),
-        Commands::Mine { iterations, bits } => commands::mine(iterations, bits),
-        Commands::Info { json } => commands::info(&json),
-        Commands::Version => commands::version(),
         Commands::Keygen { output } => commands::wallet::keygen(output),
         Commands::Address { pubkey } => commands::wallet::show_address(pubkey),
+        Commands::Mine { iterations, bits } => commands::mine(iterations, bits),
+        Commands::Genesis => commands::genesis(),
+        Commands::Info { json } => commands::info(&json),
+        Commands::Version => commands::version(),
     }
 }

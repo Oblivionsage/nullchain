@@ -1,45 +1,57 @@
-## NULLCHAIN
+# NullChain
 
-Minimal privacy-first Layer-1 blockchain. Zero-knowledge proofs. No compromise.
+Privacy-first Layer-1 blockchain. Minimal codebase. Zero-knowledge proofs.
 
-    Status:       [EXPERIMENTAL]
-    License:      MIT/Apache-2.0
-    Language:     Rust
-    Code:         <10k lines 
+    Status: Experimental (testnet)
+    Language: Rust
+    License: MIT/Apache-2.0
 
----
+## Install
+```bash
+git clone https://github.com/Oblivionsage/nullchain
+cd nullchain
+cargo build --release
+```
 
-## INSTALL
+## Usage
+```bash
+# Generate keypair
+nullchain keygen
+nullchain keygen --output ~/.nullchain
 
-    git clone https://github.com/Oblivionsage/nullchain
-    cd nullchain
-    cargo build --release
+# Derive address
+nullchain address --pubkey ~/.nullchain/key.pub
 
----
+# Mine block
+nullchain mine --bits 0x1f0fffff
 
-## USAGE
+# Genesis block
+nullchain genesis
 
-    nullchain keygen                    # Generate keypair
-    nullchain keygen --output ~/.null   # Save encrypted keys
-    nullchain address --pubkey <file>   # Derive address
-    nullchain mine --bits 0x1f0fffff    # Mine block
-    nullchain genesis                   # Genesis block
+# Block info
+nullchain info --json <block.json>
+```
 
----
+## Architecture
+```
+nullchain/
+├── nullchain-types/      Block, Transaction, Merkle
+├── nullchain-crypto/     Ed25519, Blake3, Zeroize
+├── nullchain-consensus/  PoW, Difficulty
+├── nullchain-network/    P2P (libp2p)
+├── nullchain-storage/    RocksDB
+└── nullchain-node/       CLI
+```
 
-## CRYPTOGRAPHY
+## Cryptography
 
-    Hashing:       Blake3
-    Signatures:    Ed25519
-    ZK Backend:    Plonky2 (no trusted setup)
-    Memory:        Zeroized on drop
+    Hashing:    Blake3
+    Signatures: Ed25519 (zeroized on drop)
+    ZK Proofs:  Plonky2 (no trusted setup)
 
----
-
-## ROADMAP
+## Roadmap
 
 ### Phase 0: Foundation [COMPLETE]
-**Goal**: Basic blockchain infrastructure
 
     [x] Block structure with Merkle trees
     [x] UTXO transaction model
@@ -47,315 +59,232 @@ Minimal privacy-first Layer-1 blockchain. Zero-knowledge proofs. No compromise.
     [x] Blake3 double-hashing for PoW
     [x] Difficulty adjustment algorithm
     [x] CLI wallet (keygen, address)
-    [x] Encrypted key storage with passphrase
-    [x] Memory safety (zeroize sensitive data)
+    [x] Encrypted key storage
+    [x] Memory safety (zeroize)
 
----
+### Phase 1: Core Privacy [Q1 2026]
 
-### Phase 1: Core Privacy Layer 
+**1.1 Confidential Transactions**
+    [ ] Pedersen commitments
+    [ ] Range proofs (Bulletproofs)
+    [ ] Confidential addresses
 
-**Goal**: Transaction-level privacy without trusted setup
+**1.2 Ring Signatures**
+    [ ] MLSAG/CLSAG implementation
+    [ ] Ring size: 11 (configurable)
+    [ ] Key images (double-spend prevention)
+    [ ] Decoy selection algorithm
 
-#### 1.1: Confidential Transactions
-
-    [ ] Pedersen commitments for amount hiding
-    [ ] Range proofs (prevent negative amounts)
-    [ ] Bulletproofs for compact proof size
-    [ ] Confidential address scheme
-    [ ] Balance verification without revealing amounts
-
-#### 1.2: Ring Signatures (Monero-style)
-
-    [ ] MLSAG (Multilayered Linkable Spontaneous Anonymous Group)
-    [ ] Ring size: configurable (default 11)
-    [ ] Key image for double-spend prevention
-    [ ] Decoy selection algorithm (resist chain analysis)
-    [ ] Subaddress support for receive privacy
-
-#### 1.3: Stealth Addresses
-
+**1.3 Stealth Addresses**
     [ ] One-time addresses per transaction
-    [ ] Dual-key stealth protocol (view/spend keys)
+    [ ] Dual-key protocol (view/spend)
     [ ] Address scanning with view key
-    [ ] Encrypted payment IDs
-    [ ] Integrated addresses for invoicing
 
-#### 1.4: RingCT Integration
+**1.4 RingCT**
+    [ ] Ring signatures + confidential amounts
+    [ ] Prunable RingCT
+    [ ] Triptych (logarithmic proof size)
 
-    [ ] Combine ring signatures + confidential amounts
-    [ ] CLSAG signatures (more efficient than MLSAG)
-    [ ] Prunable RingCT (reduce blockchain bloat)
-    [ ] Triptych (future: logarithmic proof size)
+### Phase 2: Network Privacy [Q2 2026]
 
----
-
-### Phase 2: Network Privacy
-
-**Goal**: Protect metadata and network-level information
-
-#### 2.1: Dandelion++ Transaction Broadcast
-
+**2.1 Dandelion++**
     [ ] Stem phase (anonymous relay)
     [ ] Fluff phase (public broadcast)
-    [ ] Resist timing analysis
-    [ ] IP address unlinkability
+    [ ] Timing analysis resistance
 
-#### 2.2: Tor/I2P Integration
-
-    [ ] Onion routing for P2P connections
-    [ ] Hidden service support
+**2.2 Tor/I2P**
+    [ ] Onion routing for P2P
+    [ ] Hidden services
     [ ] I2P garlic routing
-    [ ] Mixed network selection
 
-#### 2.3: Decoy Transaction Generation
-
+**2.3 Decoy Transactions**
     [ ] Automatic dummy transactions
-    [ ] Mimic real transaction patterns
-    [ ] Obfuscate transaction graph
+    [ ] Pattern mimicking
     [ ] Configurable noise level
 
-#### 2.4: Network Timing Obfuscation
+**2.4 Traffic Obfuscation**
+    [ ] Random relay delays
+    [ ] Uniform packet padding
+    [ ] Batched broadcasting
 
-    [ ] Random delays in transaction relay
-    [ ] Padding to uniform packet sizes
-    [ ] Traffic analysis resistance
-    [ ] Batched transaction broadcasting
+### Phase 3: Advanced ZK [Q3 2026]
 
----
-
-### Phase 3: Advanced ZK Proofs 
-
-**Goal**: zkSNARKs/zkSTARKs for enhanced privacy
-
-#### 3.1: Plonky2 Integration
-
+**3.1 Plonky2**
     [ ] Recursive proof composition
-    [ ] Fast proof generation (<1s)
-    [ ] Small proof size (<200KB)
-    [ ] No trusted setup required
+    [ ] Fast proving (<1s)
+    [ ] Small proofs (<200KB)
 
-#### 3.2: Shielded Transaction Pool
+**3.2 Shielded Pool**
+    [ ] zkSNARK circuits
+    [ ] Nullifier set
+    [ ] Note commitment tree
 
-    [ ] zkSNARK circuits for private transfers
-    [ ] Nullifier set (prevent double-spend)
-    [ ] Note commitment tree (Merkle)
-    [ ] Spend/output circuits
+**3.3 Hybrid Model**
+    [ ] Transparent pool
+    [ ] Shielded pool
+    [ ] Cross-pool transactions
 
-#### 3.3: Hybrid Privacy Model
+**3.4 ZK Set Membership**
+    [ ] UTXO existence proofs
+    [ ] Aggregated membership
+    [ ] Accumulator-based
 
-    [ ] Transparent pool (like Bitcoin)
-    [ ] Shielded pool (like Zcash Sapling)
-    [ ] Cross-pool transactions (shield/unshield)
-    [ ] User choice: speed vs privacy
+### Phase 4: zkVM [Q4 2026]
 
-#### 3.4: Zero-Knowledge Set Membership
+**4.1 zkVM Integration**
+    [ ] Risc Zero / SP1 / Jolt evaluation
+    [ ] Rust → zkVM compiler
+    [ ] Standard library
+    [ ] Gas metering
 
-    [ ] Prove UTXO exists without revealing which
-    [ ] Aggregated membership proofs
-    [ ] Constant-size proofs regardless of set size
-    [ ] Accumulator-based approach
+**4.2 Private Contracts**
+    [ ] Hidden state
+    [ ] Private function calls
+    [ ] Encrypted storage
+    [ ] Selective disclosure
 
----
-
-### Phase 4: zkVM & Private Contracts
-
-**Goal**: Programmable privacy with smart contracts
-
-#### 4.1: zkVM Selection & Integration
-
-    [ ] Evaluate: Risc Zero, SP1, Jolt, zkMIPS
-    [ ] Rust → zkVM compiler toolchain
-    [ ] Standard library for zkVM contracts
-    [ ] Gas metering for execution cost
-
-#### 4.2: Private Smart Contract Layer
-
-    [ ] Deploy contracts with hidden state
-    [ ] Private function calls (hide selector)
-    [ ] Encrypted contract storage
-    [ ] Selective disclosure (prove properties)
-
-#### 4.3: Privacy-Preserving DeFi
-
-    [ ] Private DEX (hidden orders, amounts)
-    [ ] Confidential lending (rates hidden)
+**4.3 Privacy DeFi**
+    [ ] Private DEX
+    [ ] Confidential lending
     [ ] Private stablecoins
-    [ ] Anonymous voting/governance
+    [ ] Anonymous governance
 
-#### 4.4: Cross-Contract Privacy
+**4.4 Cross-Contract**
+    [ ] Contract composition
+    [ ] Encrypted messages
+    [ ] Proof of execution
 
-    [ ] Private contract composition
-    [ ] Encrypted inter-contract messages
-    [ ] Proof of execution correctness
-    [ ] Minimal information leakage
+### Phase 5: Quantum Resistance [2027]
 
----
+**5.1 Post-Quantum Signatures**
+    [ ] SPHINCS+ (hash-based)
+    [ ] Dilithium (lattice)
+    [ ] Falcon (compact lattice)
+    [ ] Hybrid (classical + PQ)
 
-### Phase 5: Quantum Resistance
+**5.2 PQ Key Exchange**
+    [ ] Kyber (lattice KEM)
+    [ ] NTRU encryption
+    [ ] Migration from Ed25519
 
-**Goal**: Future-proof against quantum computers
-
-#### 5.1: Post-Quantum Signatures
-
-    [ ] SPHINCS+ (stateless hash-based)
-    [ ] Dilithium (lattice-based)
-    [ ] Falcon (compact lattice signatures)
-    [ ] Hybrid scheme (classical + PQ)
-
-#### 5.2: Post-Quantum Key Exchange
-
-    [ ] Kyber (lattice-based KEM)
-    [ ] NTRU for encryption
-    [ ] Migration path from Ed25519
-
-#### 5.3: Quantum-Resistant ZK Proofs
-
-    [ ] STARKs (already quantum-resistant)
+**5.3 PQ ZK Proofs**
+    [ ] STARKs (quantum-resistant)
     [ ] Lattice-based zkSNARKs
     [ ] Hash-based commitments
 
----
+### Phase 6: Advanced Features [2027+]
 
-### Phase 6: Advanced Privacy Features
+**6.1 ZK Rollups**
+    [ ] Layer 2 scaling
+    [ ] Batch transactions
+    [ ] 1000x throughput
 
-**Goal**: State-of-the-art anonymity
-
-#### 6.1: Zero-Knowledge Rollups
-
-    [ ] Layer 2 scaling with privacy
-    [ ] Batch thousands of transactions
-    [ ] Single ZK proof for entire batch
-    [ ] 1000x throughput increase
-
-#### 6.2: Private Asset Issuance
-
-    [ ] Confidential tokens (amounts hidden)
+**6.2 Private Assets**
+    [ ] Confidential tokens
     [ ] Colored coins with privacy
     [ ] NFTs with ownership privacy
     [ ] Private atomic swaps
 
-#### 6.3: Mimblewimble Integration
+**6.3 Mimblewimble**
+    [ ] Confidential transactions
+    [ ] Cut-through pruning
+    [ ] Compact blockchain
 
-    [ ] Confidential transactions (different approach)
-    [ ] Cut-through (prune transaction history)
-    [ ] Compact blockchain (no addresses stored)
-    [ ] Dandelion for network privacy
-
-#### 6.4: Threshold Cryptography
-
-    [ ] Multi-signature wallets (privacy-preserving)
+**6.4 Threshold Cryptography**
+    [ ] Multi-sig wallets (private)
     [ ] Distributed key generation
     [ ] Threshold decryption
-    [ ] MPC for key management
+    [ ] MPC key management
 
-#### 6.5: Time-Lock Encryption
-
-    [ ] Verifiable delay functions (VDFs)
-    [ ] Sealed transactions (revealed later)
+**6.5 Time-Lock**
+    [ ] VDFs (verifiable delay)
+    [ ] Sealed transactions
     [ ] Time-released secrets
-    [ ] Fair exchange protocols
+    [ ] Fair exchange
 
-#### 6.6: Homomorphic Encryption
-
+**6.6 Homomorphic Encryption**
     [ ] Compute on encrypted data
-    [ ] Private smart contract state transitions
-    [ ] Encrypted blockchain analytics
-    [ ] Zero-knowledge machine learning
+    [ ] Private state transitions
+    [ ] Encrypted analytics
+    [ ] ZK machine learning
 
----
+### Phase 7: Censorship Resistance [2028]
 
-### Phase 7: Censorship Resistance
+**7.1 P2P Hardening**
+    [ ] Kademlia DHT
+    [ ] Gossip optimization
+    [ ] Eclipse mitigation
+    [ ] Sybil resistance
 
-**Goal**: Unstoppable privacy network
-
-#### 7.1: P2P Network Hardening
-
-    [ ] Kademlia DHT for peer discovery
-    [ ] Gossip protocol optimization
-    [ ] Eclipse attack mitigation
-    [ ] Sybil attack resistance
-
-#### 7.2: Proof-of-Stake + Privacy
-
+**7.2 PoS + Privacy**
     [ ] Private validator selection
-    [ ] Confidential staking amounts
+    [ ] Confidential staking
     [ ] Anonymous block producers
-    [ ] No stake grinding attacks
 
-#### 7.3: Cross-Chain Privacy Bridges
-
-    [ ] zkBridge for Ethereum (private)
-    [ ] Lightning Network integration
-    [ ] Atomic swaps with Monero
+**7.3 Cross-Chain**
+    [ ] zkBridge (Ethereum)
+    [ ] Lightning Network
+    [ ] Atomic swaps (Monero)
     [ ] Private IBC (Cosmos)
 
-#### 7.4: Regulatory Compliance Layer (Optional)
-
+**7.4 Compliance (Optional)**
     [ ] View keys for auditing
-    [ ] Selective disclosure proofs
-    [ ] Compliance tools (opt-in)
+    [ ] Selective disclosure
     [ ] Privacy-preserving KYC
 
----
+### Phase 8: Research [2029+]
 
-### Phase 8: Research & Future Tech 
+**8.1 FHE**
+    [ ] Fully homomorphic encryption
+    [ ] Arbitrary computation
+    [ ] Private analytics
+    [ ] Confidential AI
 
-**Goal**: Push boundaries of cryptographic privacy
+**8.2 Indistinguishability Obfuscation**
+    [ ] Hide program logic
+    [ ] Private contract code
 
-#### 8.1: Fully Homomorphic Encryption (FHE)
-
-    [ ] Arbitrary computation on encrypted data
-    [ ] No decryption needed for operations
-    [ ] Private blockchain analytics
-    [ ] Confidential AI on-chain
-
-#### 8.2: Indistinguishability Obfuscation
-
-    [ ] Hide program logic completely
-    [ ] Private smart contract code
-    [ ] Theoretical limit of obfuscation
-
-#### 8.3: Multi-Party Computation (MPC)
-
-    [ ] Distributed private key generation
-    [ ] Threshold signatures (no single point of failure)
+**8.3 MPC**
+    [ ] Distributed key generation
+    [ ] Threshold signatures
     [ ] Private set intersection
     [ ] Secure auctions
 
----
+**8.4 ZK Machine Learning**
+    [ ] Prove model accuracy
+    [ ] Private training data
+    [ ] Verifiable inference
+    [ ] On-chain zkML
 
-## SECURITY
+## Security
 
+**Threat Model:**
+- Global passive adversary
+- Active network attackers
+- Chain analysis firms
+- Malicious nodes (33% Byzantine)
+- Quantum computers (future)
 
-### Current Mitigations
-    [x] Constant-time cryptographic operations
-    [x] Memory wiping (zeroize)
-    [x] Encrypted key storage
-    [x] Minimal codebase (<10k lines)
-    [x] Audited dependencies only
-
-### Planned Mitigations
-
-    [ ] Ring signatures (unlinkability)
-    [ ] Stealth addresses (untraceability)
-    [ ] Network-level privacy (Tor/I2P)
-    [ ] Post-quantum cryptography
+**Current Mitigations:**
+- Constant-time operations
+- Memory wiping (zeroize)
+- Encrypted key storage
+- Minimal codebase (<10k lines)
+- Audited dependencies only
 
 **Report vulnerabilities:** GitHub Security Advisories
 
----
+## Build
+```bash
+cargo build --release
+cargo test
+cargo clippy -- -D warnings
+```
 
-## CONTRIBUTING
-
-Read CONTRIBUTING.md. Security PRs prioritized.
-
----
-
-## LICENSE
+## License
 
 MIT OR Apache-2.0
 
 ---
 
-
-    Build: 2025-10-24 | Version: 0.1.0
+    github.com/Oblivionsage/nullchain
