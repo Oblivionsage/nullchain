@@ -210,7 +210,7 @@ MIT + Apache 2.0 (same as Rust). Use at your own risk.
 ## Contact
 
 - GitHub: https://github.com/Oblivionsage/nullchain
-- Author: nullprophet
+- Author: NullChain
 
 ---
 
