@@ -23,7 +23,7 @@ pub fn hash_block_header(header: &[u8]) -> Hash256 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_hash_deterministic() {
         let data = b"nullchain";
@@ -31,7 +31,7 @@ mod tests {
         let hash2 = hash_data(data);
         assert_eq!(hash1, hash2);
     }
-    
+
     #[test]
     fn test_double_hash_different() {
         let data = b"test";

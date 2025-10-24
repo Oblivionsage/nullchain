@@ -51,11 +51,8 @@ mod tests {
         if let Some((mined_block, hash)) = result {
             assert!(verify_pow(&mined_block));
             assert_ne!(hash, Hash256::zero());
-        } else {
-            // If we didn't find a block in 10M tries, that's ok for test
-            // Just verify the function works
-            assert!(true);
         }
+        // If no block found in 10M iterations, that's acceptable for this test
     }
     
     #[test]
@@ -64,10 +61,7 @@ mod tests {
         block.header.bits = 0x1d00ffff;
         block.header.nonce = 12345; // Random nonce, likely invalid
         
-        // Most random nonces won't meet difficulty
-        // (unless we're extremely lucky)
-        let meets_target = verify_pow(&block);
-        // Just make sure the function runs without panic
-        assert!(meets_target == true || meets_target == false);
+        // Verify function runs without panic
+        let _ = verify_pow(&block);
     }
 }

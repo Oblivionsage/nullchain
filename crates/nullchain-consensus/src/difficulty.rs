@@ -23,9 +23,8 @@ pub fn adjust_difficulty(
     let mantissa = (old_bits & 0x00ffffff) as f64;
     
     let new_mantissa = (mantissa * adjustment).min(0x00ffffff as f64) as u32;
-    let new_bits = ((exponent as u32) << 24) | (new_mantissa & 0x00ffffff);
     
-    new_bits
+    ((exponent as u32) << 24) | (new_mantissa & 0x00ffffff)
 }
 
 /// Calculate target time for difficulty adjustment period

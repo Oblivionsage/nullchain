@@ -1,9 +1,9 @@
 pub mod genesis;
-pub mod mine;
 pub mod info;
+pub mod mine;
 pub mod version;
 
 pub use genesis::genesis;
-pub use mine::mine;
 pub use info::info;
+pub use mine::mine;
 pub use version::version;

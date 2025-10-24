@@ -4,8 +4,7 @@ mod commands;
 
 fn parse_hex_or_decimal(s: &str) -> Result<u32, String> {
     if let Some(hex_str) = s.strip_prefix("0x") {
-        u32::from_str_radix(hex_str, 16)
-            .map_err(|e| format!("Invalid hex: {}", e))
+        u32::from_str_radix(hex_str, 16).map_err(|e| format!("Invalid hex: {}", e))
     } else {
         s.parse::<u32>()
             .map_err(|e| format!("Invalid number: {}", e))
@@ -25,25 +24,25 @@ struct Cli {
 enum Commands {
     /// Create and display the genesis block
     Genesis,
-    
+
     /// Mine a new block
     Mine {
         /// Maximum mining iterations (default: unlimited)
         #[arg(short, long)]
         iterations: Option<u64>,
-        
+
         /// Difficulty bits (hex: 0x21ffffff or decimal: 553648127)
         #[arg(short, long, default_value = "0x24ffffff", value_parser = parse_hex_or_decimal)]
         bits: u32,
     },
-    
+
     /// Display information about a block
     Info {
         /// Block data in JSON format
         #[arg(short, long)]
         json: String,
     },
-    
+
     /// Display version and system information
     Version,
 }

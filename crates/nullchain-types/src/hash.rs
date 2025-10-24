@@ -10,12 +10,12 @@ impl Hash256 {
     pub const fn from_bytes(bytes: [u8; 32]) -> Self {
         Self(bytes)
     }
-    
+
     /// Get byte array
     pub fn as_bytes(&self) -> &[u8; 32] {
         &self.0
     }
-    
+
     /// All zeros (used for genesis)
     pub const fn zero() -> Self {
         Self([0u8; 32])
@@ -40,7 +40,7 @@ impl fmt::Debug for Hash256 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_hash_display() {
         let hash = Hash256::from_bytes([1u8; 32]);
@@ -48,7 +48,7 @@ mod tests {
         assert_eq!(display.len(), 64); // 32 bytes * 2 hex chars
         assert!(display.chars().all(|c| c.is_ascii_hexdigit()));
     }
-    
+
     #[test]
     fn test_zero_hash() {
         let zero = Hash256::zero();
