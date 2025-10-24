@@ -4,6 +4,10 @@ version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
-repository.workspace = true
 
 [dependencies]
+serde = { workspace = true }
+bincode = { workspace = true }
+
+[dev-dependencies]
+# Test dependencies will go here
