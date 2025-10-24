@@ -16,7 +16,6 @@
             Privacy is not a feature. It's a fundamental human right.
 ```
 
-NullChain is built on cypherpunk principles:
 
 - **Privacy by default**: No opt-in required
 - **Minimal trusted code**: <10k lines of auditable Rust
