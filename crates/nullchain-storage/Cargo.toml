@@ -4,6 +4,20 @@ version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
-repository.workspace = true
 
 [dependencies]
+# Database
+rocksdb = { workspace = true }
+
+# Serialization
+bincode = { workspace = true }
+serde = { workspace = true }
+
+# Internal
+nullchain-types = { path = "../nullchain-types" }
+
+# Error handling
+thiserror = "2.0"
+
+[dev-dependencies]
+tempfile = "3.0"
